@@ -31,42 +31,43 @@ import static com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeT
  */
 public class ReincarnationGame extends ApplicationAdapter {
 
-    private BitmapFont bitmapFont;
-    private SpriteBatch spriteBatch;
+    private BitmapFont mBitmapFont;
+    private SpriteBatch mSpriteBatch;
 
-    public PerspectiveCamera cam;
-    public CameraInputController camController;
+    public PerspectiveCamera mCamera;
+    public CameraInputController mCameraController;
 
-    public Environment environment;
-    private VoxelRenderer voxelRenderer;
+    public Environment mEnvironment;
+    private VoxelRenderer mVoxelRenderer;
+
+    private int mWidth, mHeight;
 	
 	@Override
 	public void create() {
-        cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        cam.position.set(100f, 100f, 100f);
-        cam.lookAt(0,0,0);
-        cam.near = 0f;
-        cam.far = 300f;
-        cam.update();
+        mCamera = new PerspectiveCamera(67, mWidth, mHeight);
+        mCamera.position.set(100f, 100f, 100f);
+        mCamera.lookAt(0, 0, 0);
+        mCamera.near = 0f;
+        mCamera.far = 300f;
+        mCamera.update();
 
-        camController = new CameraInputController(cam);
-        Gdx.input.setInputProcessor(camController);
+        mCameraController = new CameraInputController(mCamera);
+        Gdx.input.setInputProcessor(mCameraController);
 
-        environment = new Environment();
-        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.8f, 0.8f, 0.8f, 1f));
+        mEnvironment = new Environment();
+        mEnvironment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.8f, 0.8f, 0.8f, 1f));
 
         Voxel rootVoxel = new Voxel(Vector3.Zero, 100f, 0);
         createChildrenRecursively(rootVoxel, 8);
 
-        voxelRenderer = new VoxelRenderer(rootVoxel);
+        mVoxelRenderer = new VoxelRenderer(rootVoxel);
 
         generateBitmapFont();
-        spriteBatch = new SpriteBatch();
+        mSpriteBatch = new SpriteBatch();
 	}
 
 	@Override
 	public void render() {
-        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         renderVoxels();
@@ -74,10 +75,24 @@ public class ReincarnationGame extends ApplicationAdapter {
 	}
 
     @Override
+    public void resize(int width, int height) {
+        mWidth = width;
+        mHeight = height;
+
+        Gdx.gl.glViewport(0, 0, mWidth, mHeight);
+
+        mCamera.viewportWidth = mWidth;
+        mCamera.viewportHeight = mHeight;
+        mCamera.update(false);
+
+        mSpriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, mWidth, mHeight);
+    }
+
+    @Override
     public void dispose() {
-        voxelRenderer.dispose();
-        spriteBatch.dispose();
-        bitmapFont.dispose();
+        mVoxelRenderer.dispose();
+        mSpriteBatch.dispose();
+        mBitmapFont.dispose();
     }
 
     //---------------------------------------------------------------------
@@ -96,22 +111,22 @@ public class ReincarnationGame extends ApplicationAdapter {
         FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(trueTypeFont);
         FreeTypeFontParameter fontParameter = new FreeTypeFontParameter();
         fontParameter.size = 12;
-        bitmapFont = fontGenerator.generateFont(fontParameter);
+        mBitmapFont = fontGenerator.generateFont(fontParameter);
         fontGenerator.dispose();
     }
 
     private void renderVoxels() {
-        camController.update();
-        voxelRenderer.render(cam, environment);
+        mCameraController.update();
+        mVoxelRenderer.render(mCamera, mEnvironment);
     }
 
     private void renderText() {
-        spriteBatch.begin();
-        CharSequence fps = "FPS: " + Gdx.graphics.getFramesPerSecond();
-        float x = 5;
-        float y = Gdx.graphics.getHeight() - x;
-        bitmapFont.draw(spriteBatch, fps, x, y);
-        spriteBatch.end();
+        mSpriteBatch.begin();
+        CharSequence res = "Res: " + mWidth + "x" + mHeight;
+        mBitmapFont.draw(mSpriteBatch, res, 5, mHeight - 5);
+        CharSequence fps = "Fps: " + Gdx.graphics.getFramesPerSecond();
+        mBitmapFont.draw(mSpriteBatch, fps, 5, mHeight - 20);
+        mSpriteBatch.end();
     }
 
 }

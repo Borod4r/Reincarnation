@@ -1,0 +1,16 @@
+Reincarnation
+Copyright (c) 2014 Ivan Gadzhega.
+All rights reserved.
+
+This software is the confidential and proprietary information of Ivan Gadzhega.
+("Confidential Information"). You shall not disclose such Confidential Information
+and shall use it only in accordance with the terms of the license agreement
+you entered into with Ivan Gadzhega.
+
+
+THIRD PARTY COMPONENTS
+-------------------------------
+This software includes third party software subject to the associated copyrights, as follows:
+- Libgdx (Apache 2.0) - http://libgdx.badlogicgames.com/
+
+The text of licenses for the above software is included in the /licenses folder.

@@ -12,5 +12,6 @@ THIRD PARTY COMPONENTS
 -------------------------------
 This software includes third party software subject to the associated copyrights, as follows:
 - Libgdx (Apache 2.0) - http://libgdx.badlogicgames.com/
+- Roboto (Apache 2.0) - https://www.google.com/fonts/specimen/Roboto
 
 The text of licenses for the above software is included in the /licenses folder.

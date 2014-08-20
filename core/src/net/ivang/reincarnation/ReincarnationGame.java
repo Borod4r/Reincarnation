@@ -34,13 +34,17 @@ public class ReincarnationGame extends ApplicationAdapter {
     private BitmapFont mBitmapFont;
     private SpriteBatch mSpriteBatch;
 
-    public PerspectiveCamera mCamera;
-    public CameraInputController mCameraController;
+    private PerspectiveCamera mCamera;
+    private CameraInputController mCameraController;
 
-    public Environment mEnvironment;
+    private Environment mEnvironment;
     private VoxelRenderer mVoxelRenderer;
 
     private int mWidth, mHeight;
+
+    //---------------------------------------------------------------------
+    // Public methods
+    //---------------------------------------------------------------------
 	
 	@Override
 	public void create() {

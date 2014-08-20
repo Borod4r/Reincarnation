@@ -31,6 +31,10 @@ public class VoxelRenderer {
     private ModelBatch modelBatch;
     private List<ModelInstance> modelInstances;
 
+    //---------------------------------------------------------------------
+    // Constructors
+    //---------------------------------------------------------------------
+
     public VoxelRenderer(Voxel voxel) {
         modelBatch = new ModelBatch();
         modelInstances = new ArrayList<ModelInstance>();
@@ -41,18 +45,9 @@ public class VoxelRenderer {
         createModelInstances(voxel);
     }
 
-    private void createModelInstances(Voxel voxel) {
-        if (voxel.isLeaf()) {
-            ModelInstance instance = new ModelInstance(model, voxel.getOrigin());
-            float size = voxel.getSize();
-            instance.transform.scale(size, size, size);
-            modelInstances.add(instance);
-        } else {
-            for (Voxel subVoxel: voxel.getChildren()) {
-                createModelInstances(subVoxel);
-            }
-        }
-    }
+    //---------------------------------------------------------------------
+    // Public methods
+    //---------------------------------------------------------------------
 
     public void render(PerspectiveCamera cam, Environment environment) {
         modelBatch.begin(cam);
@@ -65,6 +60,23 @@ public class VoxelRenderer {
     public void dispose() {
         modelBatch.dispose();
         model.dispose();
+    }
+
+    //---------------------------------------------------------------------
+    // Helper methods
+    //---------------------------------------------------------------------
+
+    private void createModelInstances(Voxel voxel) {
+        if (voxel.isLeaf()) {
+            ModelInstance instance = new ModelInstance(model, voxel.getOrigin());
+            float size = voxel.getSize();
+            instance.transform.scale(size, size, size);
+            modelInstances.add(instance);
+        } else {
+            for (Voxel subVoxel: voxel.getChildren()) {
+                createModelInstances(subVoxel);
+            }
+        }
     }
 
 }

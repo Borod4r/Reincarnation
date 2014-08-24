@@ -12,7 +12,9 @@ package net.ivang.reincarnation;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -48,6 +50,9 @@ public class ReincarnationGame extends ApplicationAdapter {
 	
 	@Override
 	public void create() {
+        initBitmapFont();
+        mSpriteBatch = new SpriteBatch();
+
         mCamera = new PerspectiveCamera(67, mWidth, mHeight);
         mCamera.position.set(100f, 100f, 100f);
         mCamera.lookAt(0, 0, 0);
@@ -55,8 +60,7 @@ public class ReincarnationGame extends ApplicationAdapter {
         mCamera.far = 300f;
         mCamera.update();
 
-        mCameraController = new CameraInputController(mCamera);
-        Gdx.input.setInputProcessor(mCameraController);
+        initInputProcessor(mCamera);
 
         mEnvironment = new Environment();
         mEnvironment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.8f, 0.8f, 0.8f, 1f));
@@ -65,9 +69,6 @@ public class ReincarnationGame extends ApplicationAdapter {
         createChildrenRecursively(rootVoxel, 8);
 
         mVoxelRenderer = new VoxelRenderer(rootVoxel);
-
-        generateBitmapFont();
-        mSpriteBatch = new SpriteBatch();
 	}
 
 	@Override
@@ -103,20 +104,31 @@ public class ReincarnationGame extends ApplicationAdapter {
     // Helper methods
     //---------------------------------------------------------------------
 
-    private void createChildrenRecursively(Voxel voxel, int depth) {
-        if (depth-- > 0) {
-            voxel.createChildren();
-            createChildrenRecursively(voxel.getChildren()[4], depth);
-        }
-    }
-
-    private void generateBitmapFont() {
+    private void initBitmapFont() {
         FileHandle trueTypeFont = Gdx.files.internal("fonts/Roboto-Regular.ttf");
         FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(trueTypeFont);
         FreeTypeFontParameter fontParameter = new FreeTypeFontParameter();
         fontParameter.size = 12;
         mBitmapFont = fontGenerator.generateFont(fontParameter);
         fontGenerator.dispose();
+    }
+
+    private void initInputProcessor(Camera camera) {
+        mCameraController = new CameraInputController(camera);
+        GameInputProcessor gameInputProcessor = new GameInputProcessor();
+
+        InputMultiplexer inputMultiplexer = new InputMultiplexer();
+        inputMultiplexer.addProcessor(mCameraController);
+        inputMultiplexer.addProcessor(gameInputProcessor);
+
+        Gdx.input.setInputProcessor(inputMultiplexer);
+    }
+
+    private void createChildrenRecursively(Voxel voxel, int depth) {
+        if (depth-- > 0) {
+            voxel.createChildren();
+            createChildrenRecursively(voxel.getChildren()[4], depth);
+        }
     }
 
     private void renderVoxels() {
